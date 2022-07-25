@@ -44,9 +44,9 @@ parser.add_argument('--momentum', type=float, default=0.9, help="SGD momentum (d
 parser.add_argument('--local_ep', type=int, default=5, help="the number of local epochs: E")
 parser.add_argument('--verbose', action='store_true', help='verbose print')
 parser.add_argument('--integration_time_num', type=int, default=9)
-parser.add_argument('--dataset', default='mnist')
+parser.add_argument('--dataset', default='cifar')
 
-parser.add_argument('--save', type=str, default='./experiment-fl-resODE/mnist')
+parser.add_argument('--save', type=str, default='./experiment-fl-resODE/cifar')
 parser.add_argument('--debug', action='store_true')
 parser.add_argument('--gpu', type=int, default=1)
 
@@ -313,7 +313,7 @@ if __name__ == '__main__':
     args.device = torch.device('cuda:{}'.format(args.gpu) if torch.cuda.is_available() and args.gpu != -1 else 'cpu')
     device = torch.device('cuda:' + str(args.gpu) if torch.cuda.is_available() else 'cpu')
 
-    train_loader, test_loader = getData(name='mnist',
+    train_loader, test_loader = getData(name='cifar10',
                                         train_bs=args.mini_hessian_batch_size,
                                         test_bs=1)
 
@@ -506,7 +506,7 @@ if __name__ == '__main__':
             logger.info('Top Eigenvalues: {}'.format(top_eigenvalues[0]))
             logger.info('Trace: {}'.format(np.mean(trace)))
 
-            acc_train, loss_train_f = test_img(glob_model, dataset_train, args)
+            # acc_train, loss_train_f = test_img(glob_model, dataset_train, args)
             acc_test, loss_test_f = test_img(glob_model, dataset_test, args)
             # print("Training accuracy: {:.2f}".format(acc_train))
             # print("Testing accuracy: {:.2f}".format(acc_test))
@@ -514,13 +514,15 @@ if __name__ == '__main__':
             # "Communication round {:04d} | Train Acc {:.4f} | Test Acc {:.4f}"
             # tt = 'model' + str(itr) + '.pth'
             # torch.save({'state_dict': glob_model.state_dict(), 'args': args}, os.path.join(args.save, tt))
+            # logger.info(
+            #                 "{:04d} {:.4f} {:.4f}".format(itr, acc_train, acc_test)
+            # )
             logger.info(
-                            "{:04d} {:.4f} {:.4f}".format(itr, acc_train, acc_test)
+                "{:04d} {:.4f}".format(itr, acc_test)
             )
 
             wandb.log({
                 "Test accuracy": acc_test,
-                "Train accuracy": acc_train,
                 "Top eigenvalues": top_eigenvalues[0],
                 "Trace": np.mean(trace),
                 "Eigen density": density_eigen,

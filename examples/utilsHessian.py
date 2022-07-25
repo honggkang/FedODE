@@ -62,12 +62,11 @@ def getData(name='cifar10', train_bs=128, test_bs=1000):
                                                   batch_size=test_bs,
                                                   shuffle=False)
 
-    return train_loader, test_loader
-
     if name == 'cifar10':
         transform_train = transforms.Compose([
             transforms.RandomCrop(32, padding=4),
-            transforms.RandomHorizontalFlip(),
+            transforms.RandomVerticalFlip(p=0.5),
+            transforms.RandomHorizontalFlip(p=0.5),
             transforms.ToTensor(),
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
             # transforms.Normalize((0.4914, 0.4822, 0.4465),
@@ -96,6 +95,7 @@ def getData(name='cifar10', train_bs=128, test_bs=1000):
         test_loader = torch.utils.data.DataLoader(testset,
                                                   batch_size=test_bs,
                                                   shuffle=False)
+
     if name == 'cifar10_without_dataaugmentation':
         transform_train = transforms.Compose([
             transforms.ToTensor(),
